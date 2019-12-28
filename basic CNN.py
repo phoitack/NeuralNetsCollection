@@ -99,7 +99,7 @@ for epoch in range(num_epochs):
 
     # Test
 
-    test_loss = 0.0
+    testing_loss = 0.0
     correct = 0
     iterations = 0
 
@@ -109,17 +109,17 @@ for epoch in range(num_epochs):
 
         outputs = model(inputs)
         loss = loss_fn(outputs, labels)
-        test_loss += loss.item()
+        testing_loss += loss.item()
 
         _, predicted = torch.max(outputs, 1)
         correct += (predicted == labels).sum().item()
         iterations += 1
 
-    train_loss.append(test_loss / iterations)
+    test_loss.append(testing_loss / iterations)
     test_accuracy.append(100*correct / len(test_dataset))
 
-    print("Epoch {}/{}, Training Loss: {:.3f}, Training Accuracy: {:.3f}, Testing Loss: {:.3f},Testing Accuracy: {:.3f}"
-          .format(epoch+1, num_epochs, train_loss[-1], train_accuracy[-1], test_loss[-1], test_accuracy[-1]))
+    print('Epoch {}/{}, Training Loss: {:.3f}, Training Accuracy: {:.3f}, Testing Loss: {:.3f}, Testing Acc: {:.3f}'
+          .format(epoch + 1, num_epochs, train_loss[-1], train_accuracy[-1], test_loss[-1], test_accuracy[-1]))
 
 # plotting
 f = plt.figure(figsize=(10, 10))
