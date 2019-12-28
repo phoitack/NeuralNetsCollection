@@ -1,4 +1,5 @@
-# NeuralNet
-Implementation of basic neuralnets 
+# Famous NeuralNet Collection 
+This depository contains implementation of known neuralnets:
 
-net1 is a classification neuralnet which is implemented by numpy only.
+1. Moon classification neuralnet which is implemented by numpy only.
+2. MNIST by torch
