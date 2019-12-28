@@ -62,6 +62,7 @@ def predict(model_dict, X):
 
 # Backpropagation
 def backpropagation(X, y, model_dict, epochs):
+
     for i in range(epochs):
         W1, b1, W2, b2 = retreive(model_dict)
         z1, a1, probs = forward(X, model_dict)
@@ -102,5 +103,6 @@ def init_network(input_dim, hidden_dim, output_dim):
     model['b2'] = b2
     return model
 
+# Initial network and run backpropagation (Training)
 model_dict = init_network(input_dim = input_neurons, hidden_dim = 3, output_dim = output_neurons)
-model = backpropagation(X, y, model_dict, 1500)
+model = backpropagation(X, y, model_dict, 2500)
