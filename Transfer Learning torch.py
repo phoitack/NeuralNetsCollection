@@ -6,9 +6,11 @@ import torchvision
 from torch.autograd import Variable
 from torchvision import datasets, models, transforms
 import os
+import matplotlib.pyplot as plt
 import numpy as np
 
-# Based Resnet. Considering only training and validation.
+# Transfer learning based Resnet18.
+# Considering only training and validation.
 
 
 # Data augmentation by dictionary define.
@@ -66,8 +68,86 @@ for inputs, labels in dataloaders['train']:
     print("Output tensor:", out)
     print("Outputs shape", out.shape)
     _, predicted = torch.max(out, 1)
+    print("Predicted Shape", predicted)
     print("Predicted Shape", predicted.shape)
     correct += (predicted == labels).sum()
     print("Correct Prediction:", correct)
 
     iteration +=1
+
+criterion = nn.CrossEntropyLoss()
+optimizer = optim.SGD(model_conv.fc.parameters(), lr=0.001, momentum=0.9)
+exp_lr_scheduler = lr_scheduler.StepLR(optimizer, step_size=7, gamma=0.1)
+
+def lr_scheduler(optimizer, epoch, init_lr=0.001, lr_decay_epoch=7):
+    lr = init_lr * (0.1**(epoch // lr_decay_epoch))
+
+    if epoch % lr_decay_epoch == 0:
+        print('LR is set to {}'.format(lr))
+
+    for param_group in optimizer.param_groups:
+        param_group['lr'] = lr
+
+    return optimizer
+
+num_epochs = 3
+for epoch in range(num_epochs):
+    exp_lr_scheduler.step()
+    correct = 0
+    for images, labels in dataloaders['train']:
+        images = Variable(images)
+        labels = Variable(labels)
+        optimizer.zero_grad()
+        out = model_conv(images)
+        loss = criterion(out, labels)
+        loss.backward()
+        optimizer.step()
+        _, predicted = torch.max(out, 1)
+        correct += (predicted == labels).sum()
+
+    train_acc = 100 * correct / dataset_sizes['train']
+    print('Epoch [{}/{}], loss: {:.4f}, train accuracy: {}%'.format(epoch+1,num_epochs,loss.item(),train_acc))
+
+# Test
+
+model_conv.eval()
+with torch.no_grad():
+    correct = 0
+    total = 0
+    for (images, labels) in dataloaders['val']:
+        images = Variable(images)
+        labels = Variable(labels)
+        out = model_conv(images)
+        _, predicted = torch.max(out.data, 1)
+        total += labels.size(0)
+        correct += (predicted == labels).sum().item()
+
+    print('Test accuracy: {:.3f} %'.format(100 * correct / total))
+
+# Visualization
+fig = plt.figure()
+shown_batch = 0
+index = 0
+with torch.no_grad():
+    for (images, labels) in dataloaders['val']:
+        if shown_batch == 1:
+            break
+    shown_batch += 1
+    images = Variable(images)
+    labels = Variable(labels)
+
+    out = model_conv(images)
+    _, preds = torch.max(out, 1)
+
+    for i in range(4):
+        index += 1
+        ax = plt.subplot(2,2,index)
+        ax.axis('off')
+        ax.set_title('Predicted label: {}'.format(class_names[preds[i]]))
+        input_img = images.cpu().data[i]
+        inp = input_img.numpy().transpose((1, 2, 0))
+        mean = np.array([0.485, 0.456, 0.406])
+        std = np.array([0.229, 0.224, 0.225])
+        inp = std * inp + mean
+        inp = np.clip(inp, 0, 1)
+        plt.imshow(inp)
