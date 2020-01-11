@@ -90,7 +90,7 @@ def lr_scheduler(optimizer, epoch, init_lr=0.001, lr_decay_epoch=7):
 
     return optimizer
 
-num_epochs = 3
+num_epochs = 10
 for epoch in range(num_epochs):
     exp_lr_scheduler.step()
     correct = 0
@@ -132,22 +132,22 @@ with torch.no_grad():
     for (images, labels) in dataloaders['val']:
         if shown_batch == 1:
             break
-    shown_batch += 1
-    images = Variable(images)
-    labels = Variable(labels)
+        shown_batch += 1
+        images = Variable(images)
+        labels = Variable(labels)
 
-    out = model_conv(images)
-    _, preds = torch.max(out, 1)
+        out = model_conv(images)
+        _, preds = torch.max(out, 1)
 
-    for i in range(4):
-        index += 1
-        ax = plt.subplot(2,2,index)
-        ax.axis('off')
-        ax.set_title('Predicted label: {}'.format(class_names[preds[i]]))
-        input_img = images.cpu().data[i]
-        inp = input_img.numpy().transpose((1, 2, 0))
-        mean = np.array([0.485, 0.456, 0.406])
-        std = np.array([0.229, 0.224, 0.225])
-        inp = std * inp + mean
-        inp = np.clip(inp, 0, 1)
-        plt.imshow(inp)
+        for i in range(4):
+            index += 1
+            ax = plt.subplot(2, 2, index)
+            ax.axis('off')
+            ax.set_title('Predicted Label: {}'.format(class_names[preds[i]]))
+            input_img = images.cpu().data[i]
+            inp = input_img.numpy().transpose((1, 2, 0))
+            mean = np.array([0.485, 0.456, 0.406])
+            std = np.array([0.229, 0.224, 0.225])
+            inp = std * inp + mean
+            inp = np.clip(inp, 0, 1)
+            plt.imshow(inp)
