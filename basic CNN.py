@@ -133,3 +133,12 @@ plt.plot(train_accuracy, label='Training Accuracy')
 plt.plot(test_accuracy, label='Testing Accuracy')
 plt.legend()
 plt.show()
+
+img = test_dataset[30][0].resize_((1, 1, 28, 28))
+label = test_dataset[30][1]
+model.eval()
+outputs = model(img)
+_, predicted = torch.max(outputs, 1)
+print("Our prediction is : {}".format(predicted.item()))
+print("The actual is : {}".format(label))
+
