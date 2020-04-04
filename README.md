@@ -5,4 +5,4 @@ This depository contains implementation of known neuralnets:
 2. Basic fully-connectecd neural-net for MNIST classification (torch)
 3. Basic CNN for MNIST classification
 4. Transfer Learning 
-5. Horse_Human_classifier based on CNN. (tensorflow implementation) 
+5. Happy / sad classifier based on CNN. (tensorflow implementation) 
